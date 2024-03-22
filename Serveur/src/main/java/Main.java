@@ -1,9 +1,10 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import com.google.gson.Gson;
+
+import java.io.*;
 import java.net.*;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -62,8 +63,6 @@ public class Main {
                     socketOut.println("Valeur de la main : " + joueur.getValeurTotale());
 
                     //boucle pour savoir si le joueur pige ou pas
-                    boolean error = false;
-                    boolean has_piocher = false;
                     while (true) {
                         //question
                         socketOut.println("Souhaiter vous piger une nouvelle carte? [n / o] ");
@@ -138,8 +137,46 @@ public class Main {
                             socketOut.println("Vous avez aussi une main identique. Match nul");
                     }
 
-                    
+                    //compilation du resultat
+                    try {
+                        Gson gson = new Gson();
+                        String json1 = gson.toJson(croupier, MainBlackjack.class);
+                        String json2 = gson.toJson(joueur, MainBlackjack.class);
+                        String timesStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+                        FileWriter writer = new FileWriter(timesStamp+".json");
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    //boucle pour savoir si le joueur fait une nouvelle partie ou pas
+                    boolean start_new_game = true;
+                    while (true) {
+                        //question
+                        socketOut.println("Souhaiter une nouvelle parti? [n / o] ");
+
+                        //recuperer la reponse
+                        socketOut.println("INPUT");
+                        String choice = socketIn.readLine();
+
+                        //traiter le choix
+                        if (Objects.equals(choice, "o")) { //Reponse positif
+                            System.out.println("INFO : nouvvel patie");
+                            break;
+                        } else if (Objects.equals(choice, "n")) { //fin de notre tour
+                            System.out.println("\nINFO : Fin des toutes les partis");
+                            start_new_game = false;
+                            break;
+                        } else {
+                            System.out.println("INFO: Le joueur a fait une erreur dans son choix");
+                            System.out.printf("DEBUG: %s", choice);
+                            socketOut.println("Reponse non valide");
+                        }
+                    }
+
+                    if (!start_new_game) break;
                 }
+
+                socketOut.println("BREAK");
 
                 //fin de session de jeu
                 clientSocket.close();
