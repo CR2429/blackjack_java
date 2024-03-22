@@ -10,22 +10,9 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         try {
-            Scanner scanner = new Scanner(System.in);
-
-
             //demander une connexion avec un serveur
-            String ip;
-            int port;
-
-            System.out.printf("IP (224.214.26.78) : ");
-            scanner.nextLine();
-
-            ip = scanner.toString();
-
-            System.out.printf("\nPort (8080) : ");
-            scanner.nextLine();
-
-            port = Integer.parseInt(scanner.toString());
+            String ip = "localhost";
+            int port = Integer.parseInt("8080");
 
             Socket socket = new Socket(ip,port);
 
@@ -45,12 +32,15 @@ public class Main {
                 //detect la fermeture du serveur
                 if (Objects.equals(message, "BREAK")) {
                     break;
+                } else
+                if (Objects.equals(message, "INPUT")) {
+                    Scanner scanner = new Scanner(System.in);
+                    String reponse = scanner.nextLine();
+                    socketOut.printf("%s\n", reponse);
+                } else {
+                    //afficher le message et envoyer l'input
+                    System.out.println(message);
                 }
-
-                //afficher le message et envoyer l'input
-                System.out.println(message);
-                scanner.nextLine();
-                socketOut.printf("%s\n", scanner);
             }
 
             //fermer la connexion avec le serveur
