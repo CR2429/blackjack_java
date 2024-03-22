@@ -1,7 +1,8 @@
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.*;
 import java.util.Scanner;
 
 public class Main {
@@ -23,7 +24,36 @@ public class Main {
 
     //    port = Integer.parseInt(scanner.toString());
 
-        //demarrer le serveur
+        //boucle pour que le serveur tourne toujours
+        while (true) {
+            //demarrer le serveur
+            try (DatagramSocket datagramSocket = new DatagramSocket()) {
+                //lire le port
+                serverSocket = new ServerSocket(8080);
+
+                //connexion
+                clientSocket = serverSocket.accept();
+                System.out.printf("\nDEBUG: Connexion d'un client: %s\n", clientSocket.getInetAddress().getHostAddress());
+
+                //lire les flux
+                PrintWriter socketOut = new PrintWriter(clientSocket.getOutputStream(), true);
+                BufferedReader socketIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+                //message de bienvenue
+                socketOut.println("=* Bienvenue au blackjack *=");
+
+                //jeu
+                while (true) {
+                    break;
+                }
+
+                //fin de session de jeu
+                clientSocket.close();
+                serverSocket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
     }
 }
