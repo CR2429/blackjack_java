@@ -33,6 +33,11 @@ public class Main {
             PrintWriter socketOut = new PrintWriter(socket.getOutputStream(), true);
             BufferedReader socketIn = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
+            //recuperer le message de bienvenue
+            String bienvenue = socketIn.readLine();
+            System.out.println(bienvenue);
+
+            //Jeu
             while (true) {
                 //recuperer le message du serveur
                 String message = socketIn.readLine();
